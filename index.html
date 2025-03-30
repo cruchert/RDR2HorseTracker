@@ -87,6 +87,73 @@
   </nav>
   <div id="horseList"></div>
   <script>
+    const onlineModeBtn = document.getElementById("onlineModeBtn");
+
+    function renderList(mode = 'story') {
+      horseList.innerHTML = '';
+      const horses = horseData[mode];
+
+      Object.entries(horses).forEach(([breed, coats]) => {
+        const breedSection = document.createElement("section");
+        const title = document.createElement("h2");
+        title.textContent = breed;
+        breedSection.appendChild(title);
+
+        const checkboxes = [];
+
+        coats.forEach(({ name, rarity, source }) => {
+          const label = document.createElement("label");
+          label.className = `horse-label rarity-${rarity} source-${source}`;
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+
+          const key = `${mode}:${breed}:${name}`;
+          checkbox.checked = localStorage.getItem(key) === "true";
+          if (checkbox.checked) label.classList.add("checked");
+
+          checkbox.addEventListener("change", () => {
+            label.classList.toggle("checked", checkbox.checked);
+            localStorage.setItem(key, checkbox.checked);
+          });
+
+          label.appendChild(checkbox);
+          label.append(" " + name);
+          breedSection.appendChild(label);
+          checkboxes.push({ checkbox, label, key });
+        });
+
+        if (checkboxes.length > 0) {
+          const resetBtn = document.createElement("button");
+          resetBtn.textContent = "Reset";
+          resetBtn.className = "reset-button";
+          resetBtn.addEventListener("click", () => {
+            checkboxes.forEach(({ checkbox, label, key }) => {
+              checkbox.checked = false;
+              label.classList.remove("checked");
+              localStorage.removeItem(key);
+            });
+          });
+          breedSection.appendChild(resetBtn);
+          horseList.appendChild(breedSection);
+        }
+      });
+    }
+
+    document.getElementById("storyModeBtn").addEventListener("click", () => {
+      document.getElementById("storyModeBtn").classList.add("active");
+      document.getElementById("onlineModeBtn").classList.remove("active");
+      renderList('story');
+    });
+
+    document.getElementById("onlineModeBtn").addEventListener("click", () => {
+      document.getElementById("onlineModeBtn").classList.add("active");
+      document.getElementById("storyModeBtn").classList.remove("active");
+      renderList('online');
+    });
+
+    renderList();
+  </script>
+  <script>
     const horseData = {
       story: {
         "American Paint": [
