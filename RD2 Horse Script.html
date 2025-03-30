@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RDR2 Horse Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1em;
+      background-color: #121212;
+      color: #f0f0f0;
+    }
+    h2 {
+      margin-top: 1.5em;
+    }
+    .horse-label {
+      display: block;
+      margin-bottom: 0.5em;
+      padding-left: 1.2em;
+      position: relative;
+    }
+    .horse-label input[type="checkbox"] {
+      position: absolute;
+      left: 0;
+      top: 0.1em;
+    }
+    .checked {
+      text-decoration: line-through;
+      color: lightgreen;
+    }
+    section {
+      margin-bottom: 2em;
+    }
+    #controls {
+      margin-bottom: 1em;
+    }
+    select, input[type="text"] {
+      padding: 0.5em;
+      margin-right: 0.5em;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>RDR2 Horse Tracker</h1>
+  <div id="controls">
+    <select id="breedFilter">
+      <option value="">-- Filter by Breed --</option>
+    </select>
+    <input type="text" id="searchBar" placeholder="Search coats..." />
+  </div>
+  <div id="horseList"></div>
+  <script>
+    const horses = {
+      "American Paint": ["Overo", "Tobiano", "Splashed White", "Grey Overo"],
+      "American Standardbred": ["Black", "Buckskin", "Palomino Dapple", "Silver Tail Buckskin"],
+      "Andalusian": ["Dark Bay", "Perlino", "Rose Grey"],
+      "Appaloosa": ["Blanket", "Leopard", "Brown Leopard", "Few Spotted"],
+      "Arabian": ["White", "Black", "Rose Grey Bay", "Red Chestnut"],
+      "Ardennes": ["Bay Roan", "Strawberry Roan", "Iron Grey Roan"],
+      "Belgian": ["Blond Chestnut", "Mealy Chestnut"],
+      "Dutch Warmblood": ["Seal Brown", "Sooty Buckskin", "Chocolate Roan"],
+      "Hungarian Halfbred": ["Flaxen Chestnut", "Piebald Tobiano", "Dapple Dark Grey"],
+      "Kentucky Saddler": ["Chestnut Pinto", "Grey", "Silver Bay", "Black"],
+      "Missouri Fox Trotter": ["Amber Champagne", "Silver Dapple Pinto", "Black Leopard"],
+      "Morgan": ["Bay", "Palomino", "Bay Roan", "Liver Chestnut"],
+      "Mustang": ["Tiger Striped Bay", "Wild Bay", "Grullo Dun", "Buckskin", "Chestnut Pinto"],
+      "Nokota": ["Blue Roan", "White Roan", "Reverse Dapple Roan"],
+      "Shire": ["Raven Black", "Dark Bay", "Light Grey"],
+      "Thoroughbred": ["Brindle", "Blood Bay", "Dapple Grey", "Black Chestnut"],
+      "Tennessee Walker": ["Black Rabicano", "Chestnut", "Dapple Bay", "Red Roan", "Mahogany Bay"],
+      "Turkoman": ["Dark Bay", "Gold", "Silver"]
+    };
+
+    const horseList = document.getElementById("horseList");
+    const breedFilter = document.getElementById("breedFilter");
+    const searchBar = document.getElementById("searchBar");
+
+    function renderList(filterBreed = '', searchQuery = '') {
+      horseList.innerHTML = '';
+
+      Object.entries(horses).forEach(([breed, coats]) => {
+        if (filterBreed && breed !== filterBreed) return;
+
+        const breedSection = document.createElement("section");
+        const title = document.createElement("h2");
+        title.textContent = breed;
+        breedSection.appendChild(title);
+
+        coats.forEach(coat => {
+          if (searchQuery && !coat.toLowerCase().includes(searchQuery.toLowerCase())) return;
+
+          const label = document.createElement("label");
+          label.className = "horse-label";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+
+          const key = `${breed}:${coat}`;
+          checkbox.checked = localStorage.getItem(key) === "true";
+          if (checkbox.checked) label.classList.add("checked");
+
+          checkbox.addEventListener("change", () => {
+            label.classList.toggle("checked", checkbox.checked);
+            localStorage.setItem(key, checkbox.checked);
+          });
+
+          label.appendChild(checkbox);
+          label.append(" " + coat);
+          breedSection.appendChild(label);
+        });
+
+        if (breedSection.children.length > 1) horseList.appendChild(breedSection);
+      });
+    }
+
+    // Populate breed filter options
+    Object.keys(horses).forEach(breed => {
+      const option = document.createElement("option");
+      option.value = breed;
+      option.textContent = breed;
+      breedFilter.appendChild(option);
+    });
+
+    // Event listeners
+    breedFilter.addEventListener("change", () => {
+      renderList(breedFilter.value, searchBar.value);
+    });
+
+    searchBar.addEventListener("input", () => {
+      renderList(breedFilter.value, searchBar.value);
+    });
+
+    renderList();
+  </script>
+</body>
+</html>
