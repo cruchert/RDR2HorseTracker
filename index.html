@@ -283,7 +283,7 @@
           label.appendChild(checkbox);
           label.append(` ${name}`);
           if (source === 'wild') label.append(` - Found in the Wild`);
-          if (stable && source === 'purchase') label.append(` - Purchased at ${stable}`);
+          if (source === 'purchase' && stable) label.append(` (${rarity.charAt(0).toUpperCase() + rarity.slice(1)}) - ${stable}`);
           section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
         });
