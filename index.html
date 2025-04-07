@@ -279,6 +279,8 @@
           label.appendChild(checkbox);
           label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
           if (source === 'wild') label.append(` - Wild`);
+          if (source === 'story') label.append(` - Story`);
+          if (source === 'free') label.append(` - Free`);
           if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
           section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
