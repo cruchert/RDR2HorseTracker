@@ -69,20 +69,16 @@
       border-radius: 4px;
     }
     .rarity-common::after {
-      content: " (Common)";
-      color: #bbb;
+      content: "";
     }
     .rarity-uncommon::after {
-      content: " (Uncommon)";
-      color: #ffb347;
+      content: "";
     }
     .rarity-unique::after {
-      content: " (Unique)";
-      color: #87cefa;
+      content: "";
     }
     .rarity-exclusive::after {
-      content: " (Exclusive)";
-      color: #e69dfb;
+      content: "";
     }
     @media (max-width: 600px) {
       h1 {
@@ -282,8 +278,8 @@
           });
           label.appendChild(checkbox);
           label.append(` ${name}`);
-          if (source === 'wild') label.append(` - Found in the Wild`);
-          if (source === 'purchase' && stable) label.append(` (${rarity.charAt(0).toUpperCase() + rarity.slice(1)}) - ${stable}`);
+          if (source === 'wild') label.append(` - ${rarity.charAt(0).toUpperCase() + rarity.slice(1)} Wild`);
+          if (source === 'purchase' && stable) label.append(` - ${rarity.charAt(0).toUpperCase() + rarity.slice(1)} Purchase, ${stable}`);
           section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
         });
