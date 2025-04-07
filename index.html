@@ -277,9 +277,9 @@
             updateProgress(mode);
           });
           label.appendChild(checkbox);
-          label.append(` ${name}`);
-          if (source === 'wild') label.append(` - ${rarity.charAt(0).toUpperCase() + rarity.slice(1)} Wild`);
-          if (source === 'purchase' && stable) label.append(` - ${rarity.charAt(0).toUpperCase() + rarity.slice(1)} Purchase, ${stable}`);
+          label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
+          if (source === 'wild') label.append(` - Wild`);
+          if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
           section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
         });
