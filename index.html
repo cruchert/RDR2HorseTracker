@@ -98,9 +98,6 @@
   <script>
     const horseData = {
   story: {
-"Albino Horse": [
-      { name: "Albino", rarity: "uncommon", source: "wild" }
-    ],
     "American Paint": [
       { name: "Grey Overo", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" },
       { name: "Overo", rarity: "common", source: "wild" },
@@ -276,12 +273,12 @@
             updateProgress(mode);
           });
 
-          label.appendChild(checkbox);
-          label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
-          if (source === 'wild') label.append(` - Wild`);
+          
           if (source === 'story') label.append(` - Story`);
           if (source === 'free') label.append(` - Free`);
           if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
+
+          section.appendChild(label);
 
           if (horses[breed].find(c => c.name === name && c.note)) {
             const noteText = horses[breed].find(c => c.name === name).note;
@@ -292,13 +289,6 @@
             note.textContent = noteText;
             section.appendChild(note);
           }
-          label.appendChild(checkbox);
-          label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
-          if (source === 'wild') label.append(` - Wild`);
-          if (source === 'story') label.append(` - Story`);
-          if (source === 'free') label.append(` - Free`);
-          if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
-          section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
         });
         const resetBtn = document.createElement('button');
@@ -339,4 +329,3 @@
   </script>
 </body>
 </html>
-
