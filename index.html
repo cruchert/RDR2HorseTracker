@@ -223,7 +223,7 @@
       { name: "Piebald Roan", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" }
     ]
   }
-}; // data is temporarily empty for structure check
+}; 
 
     const horseList = document.getElementById("horseList");
     const progressDiv = document.getElementById("progress");
@@ -274,10 +274,15 @@
           });
 
           
+          
+
+          label.innerHTML = '';
+          label.appendChild(checkbox);
+          label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
+          if (source === 'wild') label.append(` - Wild`);
           if (source === 'story') label.append(` - Story`);
           if (source === 'free') label.append(` - Free`);
           if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
-
           section.appendChild(label);
 
           if (horses[breed].find(c => c.name === name && c.note)) {
@@ -329,3 +334,4 @@
   </script>
 </body>
 </html>
+
