@@ -42,11 +42,14 @@
       font-size: 1.2em;
     }
     .horse-label {
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      flex-wrap: wrap;
       margin-bottom: 0.5em;
       gap: 0.5em;
-      flex-wrap: wrap;
+      word-break: break-word;
+      line-height: 1.4;
+      width: 100%;
     }
     .horse-label input[type="checkbox"] {
       flex-shrink: 0;
@@ -334,4 +337,3 @@
   </script>
 </body>
 </html>
-
