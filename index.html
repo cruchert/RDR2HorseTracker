@@ -10,45 +10,38 @@
       padding: 1em;
       background-color: #121212;
       color: #f0f0f0;
-      max-width: 100%;
-      box-sizing: border-box;
     }
     h1 {
       margin-bottom: 0.5em;
-      font-size: 1.5em;
-      text-align: center;
     }
     nav {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
       margin-bottom: 1em;
     }
     nav button {
-      margin: 0.3em;
-      padding: 0.5em 1em;
+      margin-right: 0.5em;
+      padding: 0.4em 0.8em;
       background-color: #333;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 1em;
     }
     nav button.active {
       background-color: #555;
     }
     h2 {
       margin-top: 1.5em;
-      font-size: 1.2em;
     }
     .horse-label {
-      display: flex;
-      align-items: center;
+      display: block;
       margin-bottom: 0.5em;
-      gap: 0.5em;
+      padding-left: 1.2em;
+      position: relative;
     }
     .horse-label input[type="checkbox"] {
-      flex-shrink: 0;
+      position: absolute;
+      left: 0;
+      top: 0.1em;
     }
     .checked {
       text-decoration: line-through;
@@ -60,7 +53,7 @@
     .reset-button {
       margin-top: 0.5em;
       margin-bottom: 1em;
-      padding: 0.5em 1em;
+      padding: 0.3em 0.6em;
       background-color: #333;
       border: none;
       color: #fff;
@@ -69,170 +62,176 @@
       border-radius: 4px;
     }
     .rarity-common::after {
-      content: "";
+      content: " (Common)";
+      color: #bbb;
     }
     .rarity-uncommon::after {
-      content: "";
+      content: " (Uncommon)";
+      color: #ffb347;
     }
-    .rarity-unique::after {
-      content: "";
+    .source-purchase::after {
+      content: " - Available in Store";
+      color: #7ec8e3;
     }
-    .rarity-exclusive::after {
-      content: "";
-    }
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.2em;
-      }
-      nav button {
-        font-size: 0.9em;
-        padding: 0.4em 0.8em;
-      }
-      .reset-button {
-        font-size: 0.85em;
-      }
+    .source-wild::after {
+      content: " - Found in the Wild";
+      color: #90ee90;
     }
   </style>
 </head>
 <body>
   <h1>RDR2 Horse Tracker</h1>
-  <nav></nav>
+  <nav>
+    <button id="storyModeBtn" class="active">Story Mode</button>
+    <button id="onlineModeBtn">Online Mode</button>
+  </nav>
   <div id="progress"></div>
   <div id="horseList"></div>
 
   <script>
     const horseData = {
-  story: {
-    "American Paint": [
-      { name: "Grey Overo", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" },
-      { name: "Overo", rarity: "common", source: "wild" },
-      { name: "Splashed White", rarity: "uncommon", source: "wild" },
-      { name: "Tobiano", rarity: "common", source: "wild" }
-    ],
-    "American Standardbred": [
-      { name: "Black", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Buckskin", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Palomino Dapple", rarity: "uncommon", source: "purchase", stable: "Valentine Stable" },
-      { name: "Silver Tail Buckskin", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" }
-    ],
-    "Andalusian": [
-      { name: "Dark Bay", rarity: "common", source: "purchase", stable: "Strawberry Stable" },
-      { name: "Perlino", rarity: "uncommon", source: "purchase", stable: "Van Horn Stable" },
-      { name: "Rose Grey", rarity: "uncommon", source: "purchase", stable: "Van Horn Stable" }
-    ],
-    "Appaloosa": [
-      { name: "Blanket", rarity: "common", source: "wild" },
-      { name: "Brown Leopard", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" },
-      { name: "Few Spotted", rarity: "uncommon", source: "wild" },
-      { name: "Leopard", rarity: "common", source: "purchase", stable: "Van Horn Stable" }
-    ],
-    "Arabian": [
-      { name: "White", rarity: "uncommon", source: "wild" },
-      { name: "Black", rarity: "uncommon", source: "purchase", stable: "Saint Denis Stable" },
-      { name: "Rose Grey Bay", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" },
-      { name: "Red Chestnut", rarity: "uncommon", source: "wild" }
-    ],
-    "Ardennes": [
-      { name: "Bay Roan", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Strawberry Roan", rarity: "uncommon", source: "purchase", stable: "Scarlett Meadows Stable" },
-      { name: "Iron Grey Roan", rarity: "uncommon", source: "purchase", stable: "Van Horn Stable" }
-    ],
-    "Belgian": [
-      { name: "Blond Chestnut", rarity: "common", source: "wild" },
-      { name: "Mealy Chestnut", rarity: "common", source: "wild" }
-    ],
-    "Dutch Warmblood": [
-      { name: "Seal Brown", rarity: "common", source: "purchase", stable: "Strawberry Stable" },
-      { name: "Sooty Buckskin", rarity: "uncommon", source: "purchase", stable: "Scarlett Meadows Stable" },
-      { name: "Chocolate Roan", rarity: "uncommon", source: "purchase", stable: "Valentine Stable" },
-      { name: "Cremello Gold", rarity: "unique", source: "story" }],
-    "Hungarian Halfbred": [
-      { name: "Flaxen Chestnut", rarity: "common", source: "wild" },
-      { name: "Piebald Tobiano", rarity: "uncommon", source: "wild" },
-      { name: "Dapple Dark Grey", rarity: "uncommon", source: "purchase", stable: "Valentine Stable" }
-    ],
-    "Kentucky Saddler": [
-      { name: "Chestnut Pinto", rarity: "common", source: "wild" },
-      { name: "Grey", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Silver Bay", rarity: "common", source: "wild" },
-      { name: "Black", rarity: "common", source: "wild" }
-    ],
-    "Missouri Fox Trotter": [
-      { name: "Amber Champagne", rarity: "uncommon", source: "purchase", stable: "Scarlett Meadows Stable" },
-      { name: "Silver Dapple Pinto", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" }
-    ],
-    "Morgan": [
-      { name: "Bay", rarity: "common", source: "wild" },
-      { name: "Palomino", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Bay Roan", rarity: "uncommon", source: "purchase", stable: "Valentine Stable" },
-      { name: "Liver Chestnut", rarity: "uncommon", source: "wild" }
-    ],
-    "Mustang": [
-      { name: "Tiger Striped Bay", rarity: "uncommon", source: "wild" },
-      { name: "Wild Bay", rarity: "common", source: "wild" },
-      { name: "Grullo Dun", rarity: "uncommon", source: "wild" }
-    ],
-    "Nokota": [
-      { name: "Blue Roan", rarity: "uncommon", source: "wild" },
-      { name: "White Roan", rarity: "uncommon", source: "wild" },
-      { name: "Reverse Dapple Roan", rarity: "uncommon", source: "purchase", stable: "Saint Denis Stable" }
-    ],
-    "Shire": [
-      { name: "Raven Black", rarity: "common", source: "wild" },
-      { name: "Dark Bay", rarity: "common", source: "wild" },
-      { name: "Light Grey", rarity: "uncommon", source: "wild" }
-    ],
-    "Suffolk Punch": [
-      { name: "Red Chestnut", rarity: "common", source: "wild" },
-      { name: "Sorrel", rarity: "common", source: "wild" }
-    ],
-    "Tennessee Walker": [
-      { name: "Black Rabicano", rarity: "common", source: "wild" },
-      { name: "Chestnut", rarity: "common", source: "wild" },
-      { name: "Dapple Bay", rarity: "uncommon", source: "wild" },
-      { name: "Flaxen Roan", rarity: "common", source: "purchase", stable: "Tumbleweed Stable" },
-      { name: "Red Roan", rarity: "common", source: "purchase", stable: "Valentine Stable" },
-      { name: "Mahogany Bay", rarity: "unique", source: "story" }
-    ],
-    "Thoroughbred": [
-      { name: "Brindle", rarity: "uncommon", source: "purchase", stable: "Strawberry Stable" },
-      { name: "Blood Bay", rarity: "common", source: "wild" },
-      { name: "Dapple Grey", rarity: "common", source: "wild" },
-      { name: "Dappled Black", rarity: "exclusive", source: "free", stable: "Any Stable" },
-      { name: "Seal Brown", rarity: "unique", source: "story" }
-    ],
-  },
-  online: {
-    "American Standardbred": [
-      { name: "Cremello Gold", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" }
-    ],
-    "Appaloosa": [
-      { name: "Black Leopard", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" }
-    ],
-    "Missouri Fox Trotter": [
-      { name: "Buckskin", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" }
-    ],
-    "Norfolk Roadster": [
-      { name: "Spotted Tricolor", rarity: "uncommon", source: "purchase", stable: "Saint Denis Stable" },
-      { name: "Dapple Grey", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" },
-      { name: "Piebald Roan", rarity: "uncommon", source: "purchase", stable: "Tumbleweed Stable" }
-    ],
-    "Turkoman": [
-      { name: "Grey", rarity: "uncommon", source: "purchase", stable: "Saint Denis Stable" },
-      { name: "Chestnut", rarity: "uncommon", source: "purchase", stable: "Blackwater Stable" }
-    ]
-  }
-};
+      story: {
+        "Albino Horse": [
+          { name: "Albino (Rare Encounter)", rarity: "uncommon", source: "wild" }
+        ],
+        "American Paint": [
+          { name: "Grey Overo", rarity: "uncommon", source: "purchase", stable: "Tumbleweed" },
+          { name: "Overo", rarity: "common", source: "wild" },
+          { name: "Splashed White", rarity: "uncommon", source: "wild" },
+          { name: "Tobiano", rarity: "common", source: "wild" }
+        ],
+        "American Standardbred": [
+          { name: "Black", rarity: "common", source: "wild" },
+          { name: "Buckskin American", rarity: "common", source: "wild" },
+          { name: "Palomino Dapple", rarity: "uncommon", source: "purchase", stable: "Valentine" },
+          { name: "Silver Tail Buckskin", rarity: "uncommon", source: "purchase", stable: "Tumbleweed" }
+        ],
+        "Andalusian": [
+          { name: "Dark Bay", rarity: "common", source: "purchase", stable: "Strawberry" },
+          { name: "Perlino", rarity: "uncommon", source: "wild" },
+          { name: "Rose Grey", rarity: "uncommon", source: "purchase", stable: "Van Horn" }
+        ],
+        "Appaloosa": [
+          { name: "Blanket", rarity: "common", source: "wild" },
+          { name: "Brown Leopard", rarity: "uncommon", source: "purchase", stable: "Tumbleweed" },
+          { name: "Few Spot", rarity: "uncommon", source: "wild" },
+          { name: "Leopard", rarity: "common", source: "purchase", stable: "Van Horn" },
+	  { name: "Leopard Blanket", rarity: "common", source: "wild" } 
+        ],
+        "Arabian": [
+          { name: "White", rarity: "uncommon", source: "wild" },
+          { name: "Black", rarity: "uncommon", source: "purchase", stable: "Saint Denis" },
+          { name: "Rose Grey Bay", rarity: "uncommon", source: "purchase", stable: "Blackwater" },
+          { name: "Red Chestnut", rarity: "uncommon", source: "wild" }, 
+	  { name: "Warped Brindle", rarity: "uncommon", source: "wild" }
+        ],
+        "Ardennes": [
+          { name: "Bay Roan", rarity: "common", source: "purchase", stable: "Scarlett Meadows" },
+          { name: "Strawberry Roan", rarity: "uncommon", source: "purchase", stable: "Van Horn" }
+        ],
+        "Belgian": [
+          { name: "Blond Chestnut", rarity: "common", source: "wild" },
+          { name: "Mealy Chestnut", rarity: "common", source: "wild" }
+        ],
+        "Dutch Warmblood": [
+          { name: "Seal Brown", rarity: "common", source: "purchase", stable: "Strawberry" },
+          { name: "Sooty Buckskin", rarity: "common", source: "purchase", stable: "Scarlett Meadows" },
+          { name: "Chocolate Roan", rarity: "uncommon", source: "purchase", stable: "Valentine" },
+	  { name: "Cremello Gold Dutch", rarity: "unique", source: "story" }
+        ],
+        "Hungarian Halfbred": [
+          { name: "Flaxen Chestnut", rarity: "common", source: "wild" },
+          { name: "Piebald Tobiano", rarity: "uncommon", source: "wild" },
+          { name: "Dapple Dark Grey", rarity: "uncommon", source: "purchase", stable: "Valentine" }
+        ],
+        "Kentucky Saddler": [
+          { name: "Chestnut Pinto", rarity: "common", source: "wild" },
+          { name: "Grey", rarity: "common", source: "purchase or wild", stable: "Valentine" },
+          { name: "Silver Bay", rarity: "common", source: "wild" },
+          { name: "Black", rarity: "common", source: "wild" },
+	  { name: "Buttermilk Buckskin", rarity: "common", source: "wild" }
+        ],
+        "Missouri Fox Trotter": [
+          { name: "Amber Champagne", rarity: "uncommon", source: "purchase", stable: "Scarlett Meadows" },
+          { name: "Silver Dapple Pinto", rarity: "uncommon", source: "purchase", stable: "Blackwater" }
+        ],
+        "Morgan": [
+          { name: "Bay", rarity: "common", source: "wild" },
+          { name: "Palomino", rarity: "common", source: "purchase or wild", stable: "Valentine" },
+          { name: "Bay Roan", rarity: "uncommon", source: "purchase or wild", stable: "Valentine" },
+	  { name: "Flaxen Chestnut", rarity: "common", source: "wild" }, 
+          { name: "Liver Chestnut", rarity: "uncommon", source: "wild" }
+        ],
+        "Mustang": [
+          { name: "Tiger Striped Bay", rarity: "uncommon", source: "wild" },
+          { name: "Wild Bay", rarity: "common", source: "wild" },
+          { name: "Grullo Dun", rarity: "uncommon", source: "wild" }
+        ],
+        "Nokota": [
+          { name: "Blue Roan", rarity: "common", source: "wild" },
+          { name: "White Roan", rarity: "uncommon", source: "wild" },
+          { name: "Reverse Dapple Roan", rarity: "common", source: "purchase", stable: "Saint Denis" }
+        ],
+        "Shire": [
+          { name: "Raven Black", rarity: "common", source: "story" },
+          { name: "Dark Bay", rarity: "common", source: "purchase" },
+          { name: "Light Grey", rarity: "uncommon", source: "purchase" }
+        ],
+	"Suffolk Punch": [
+	  { name: "Red Chestnut", rarity: "common", source: "wild" },
+	  { name: "Sorrel", rarity: "common", source: "wild" }
+	],
+        "Tennessee Walker": [
+          { name: "Black Rabicano", rarity: "common", source: "wild" },
+          { name: "Chestnut", rarity: "common", source: "wild" },
+          { name: "Dapple Bay", rarity: "uncommon", source: "wild" },
+	  { name: "Flaxen Roan", rarity: "common", source: "purchase", stable: "Tumbleweed" },
+	  { name: "Gold Palomino", rarity: "uncommon", source: "wild" }
+          { name: "Red Roan", rarity: "common", source: "purchase or wild", stable: "Valentine" },
+          { name: "Mahogany Bay", rarity: "unique", source: "story" }
+        ],
+        "Thoroughbred": [
+          { name: "Brindle", rarity: "uncommon", source: "purchase", stable: "Strawberry" },
+          { name: "Blood Bay", rarity: "common", source: "wild" },
+          { name: "Dapple Grey", rarity: "common", source: "wild" },
+	  { name: "Dappled Black", rarity: "exclusive", source: "free", stable: "Any" },
+	  { name: "Seal Brown", rarity: "unique", source: "story" }
+        ],
+        "Turkoman": [
+          { name: "Dark Bay", rarity: "uncommon", source: "purchase", stable: "Blackwater" },
+          { name: "Gold", rarity: "uncommon", source: "purchase", stable: "Saint Denis" },
+          { name: "Silver", rarity: "uncommon", source: "purchase", stable: "Tumbleweed" }
+        ],
+        "War Horse": [
+          { name: "The War Horse (Pre-order Bonus)", rarity: "uncommon", source: "purchase" }
+        ]
+      },
+      online: {
+        "Cremello Gold American Standardbred": [
+          { name: "Cremello Gold", rarity: "uncommon", source: "purchase" }
+        ],
+        "Black Leopard Appaloosa": [
+          { name: "Black Leopard", rarity: "uncommon", source: "purchase" }
+        ],
+        "Buckskin Missouri Fox Trotter": [
+          { name: "Buckskin", rarity: "uncommon", source: "purchase" }
+        ],
+        "Turkoman": [
+          { name: "Grey", rarity: "uncommon", source: "purchase" },
+          { name: "Chestnut", rarity: "uncommon", source: "purchase" }
+        ],
+        "Norfolk Roadster": [
+          { name: "Spotted Tricolor", rarity: "uncommon", source: "purchase" },
+          { name: "Dapple Grey", rarity: "uncommon", source: "purchase" },
+          { name: "Piebald Roan", rarity: "uncommon", source: "purchase" }
+        ]
+      }
+    };
 
     const horseList = document.getElementById("horseList");
     const progressDiv = document.getElementById("progress");
-    const storyModeBtn = document.createElement("button");
-    const onlineModeBtn = document.createElement("button");
-    storyModeBtn.id = "storyModeBtn";
-    onlineModeBtn.id = "onlineModeBtn";
-    storyModeBtn.textContent = "Story Mode";
-    onlineModeBtn.textContent = "Online Mode";
-    storyModeBtn.classList.add("active");
+    const storyModeBtn = document.getElementById("storyModeBtn");
+    const onlineModeBtn = document.getElementById("onlineModeBtn");
 
     function updateProgress(mode) {
       const horses = horseData[mode];
@@ -245,41 +244,44 @@
           if (localStorage.getItem(key) === "true") checked++;
         });
       });
-      const percent = total ? Math.round((checked / total) * 100) : 0;
+      const percent = Math.round((checked / total) * 100);
       progressDiv.textContent = `Progress: ${checked} / ${total} (${percent}%)`;
     }
 
     function renderList(mode = 'story') {
       horseList.innerHTML = '';
       const horses = horseData[mode];
+
       Object.entries(horses).forEach(([breed, coats]) => {
         const section = document.createElement('section');
         const title = document.createElement('h2');
         title.textContent = breed;
         section.appendChild(title);
+
         const checkboxes = [];
-        coats.forEach(({ name, rarity, source, stable }) => {
+
+        coats.forEach(({ name, rarity, source }) => {
           const label = document.createElement('label');
-          label.className = `horse-label rarity-${rarity}`;
+          label.className = `horse-label rarity-${rarity} source-${source}`;
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
+
           const key = `${mode}:${breed}:${name}`;
           checkbox.checked = localStorage.getItem(key) === "true";
           if (checkbox.checked) label.classList.add("checked");
+
           checkbox.addEventListener('change', () => {
             label.classList.toggle("checked", checkbox.checked);
             localStorage.setItem(key, checkbox.checked);
             updateProgress(mode);
           });
+
           label.appendChild(checkbox);
-          label.append(` ${name} (${rarity.charAt(0).toUpperCase() + rarity.slice(1)})`);
-          if (source === 'wild') label.append(` - Wild`);
-          if (source === 'story') label.append(` - Story`);
-          if (source === 'free') label.append(` - Free`);
-          if (source === 'purchase' && stable) label.append(` - Purchase, ${stable}`);
+          label.append(" " + name);
           section.appendChild(label);
           checkboxes.push({ checkbox, label, key });
         });
+
         const resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset';
         resetBtn.className = 'reset-button';
@@ -297,23 +299,18 @@
       updateProgress(mode);
     }
 
-    function setupNavigation() {
-      const nav = document.querySelector("nav");
-      nav.appendChild(storyModeBtn);
-      nav.appendChild(onlineModeBtn);
-      storyModeBtn.addEventListener("click", () => {
-        storyModeBtn.classList.add("active");
-        onlineModeBtn.classList.remove("active");
-        renderList('story');
-      });
-      onlineModeBtn.addEventListener("click", () => {
-        onlineModeBtn.classList.add("active");
-        storyModeBtn.classList.remove("active");
-        renderList('online');
-      });
-    }
+    storyModeBtn.addEventListener("click", () => {
+      storyModeBtn.classList.add("active");
+      onlineModeBtn.classList.remove("active");
+      renderList('story');
+    });
 
-    setupNavigation();
+    onlineModeBtn.addEventListener("click", () => {
+      onlineModeBtn.classList.add("active");
+      storyModeBtn.classList.remove("active");
+      renderList('online');
+    });
+
     renderList();
   </script>
 </body>
